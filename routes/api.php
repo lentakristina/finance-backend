@@ -9,6 +9,9 @@ use App\Http\Controllers\GoalController;
 Route::post('/register', [AuthController::class, 'register']);
 Route::post('/login', [AuthController::class, 'login']);
 
+// ✅ PUBLIC Categories endpoint (no auth required)
+Route::get('/categories', [CategoryController::class, 'index']);
+
 // ✅ Allow CORS preflight (OPTIONS) requests to pass without JWT check
 Route::options('{any}', function () {
     return response()->json([], 200);
@@ -21,8 +24,8 @@ Route::group(['middleware' => ['jwt.auth']], function () {
     Route::post('/refresh', [AuthController::class, 'refresh']);
     Route::get('/me', [AuthController::class, 'me']);
 
-    // Categories - RESTful API resource
-    Route::apiResource('categories', CategoryController::class);
+    // Categories - RESTful API resource (except index, karena sudah public)
+    Route::apiResource('categories', CategoryController::class)->except(['index']);
 
     // Goals - RESTful API resource
     Route::apiResource('goals', GoalController::class);
